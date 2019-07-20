@@ -42,6 +42,7 @@ class preproc:
 
 def parseargs():
     parser = ArgumentParser()
+    parser.add_argument('-d', '--data_file')
     #MuLaw paramaters
     parser.add_argument('-m', '--mu', default=256)
 
@@ -67,7 +68,7 @@ def train(args):
     spec_param = {'sampling_rate' : args.sr, 'nfft' : args.nfft, 'hop_length' : args.hop_length}
     ml_param = {'mu' : args.mu, 'int_type' : tf.int32, 'float_type' : tf.float32}
     preprocess_ = preproc(length=args.crop, **{'Mu_law' : ml_param, 'spec' : spec_param})
-    quatized, onehot, normalized, spec = dataloader('data/train_arlu.tfrecord', process_fn=preprocess_.preprocess)
+    quatized, onehot, normalized, spec = dataloader(args.data_file, process_fn=preprocess_.preprocess)
     Wavenet = models.Wavenet(args.loop, args.res_layer, args.k_size, args.res_channel, args.skip_channel, args.mu)
     Upsample = models.UpsampleNet(args.loop*args.res_layer, args.res_channel*2)
     enc_features = Upsample(spec)
@@ -75,8 +76,9 @@ def train(args):
     loss = tf.losses.softmax_cross_entropy(onehot, output)
     tf.summary.scalar('loss', loss)
     opt = tf.train.AdamOptimizer(0.0001).minimize(loss)
-    with tf.Session() as sess:
-        loss_, _ = sess.run([loss, opt])
+    tf.train.export_meta_graph('wavenet.meta')
+    #with tf.Session() as sess:
+    #    loss_, _ = sess.run([loss, opt])
 
 if __name__ == "__main__":
     args = parseargs()

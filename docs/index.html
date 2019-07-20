@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <title>Wavenet_Graph</title>
+</head>
+<body>
+    <object id="graph" data="g.txt" type="text/plain" style="display:none"></object>
+    <script>
+        function load(){
+            $.get('g.txt', function(data){
+                document.getElementById("wavenet").pbtxt = data;
+            });
+        }
+    </script>
+    <link rel="import" href="https://tensorboard.appspot.com/tf-graph-basic.build.html" onload=load()>
+    <div>
+      <tf-graph-basic id="wavenet"></tf-graph-basic>
+    </div>
+</body>
+</html>

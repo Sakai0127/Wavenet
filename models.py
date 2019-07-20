@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 class ResidualNet:
-    def __init__(self, n_loop, layers_per_loop, k_size, res_channel, skip_channel, conditioning=True, name='ResNet'):
+    def __init__(self, n_loop=2, layers_per_loop=10, k_size=2, res_channel=64, skip_channel=256, conditioning=True, name='ResNet'):
         self.dilations = [2**i for i in range(layers_per_loop)]*n_loop
         self.k_size = k_size
         self.res_channel = res_channel
@@ -15,7 +15,7 @@ class ResidualNet:
             x = tf.pad(input, [[0, 0],[dilation * (self.k_size-1), 0], [0, 0]])
             x = tf.layers.conv1d(x, self.res_channel*2, self.k_size, dilation_rate=dilation)
             x = x[:,:length,:]
-            if self.conditioning:
+            if self.conditioning and cond is not None:
                 x += cond
             tanh_z, sig_z = tf.split(x, 2, 2)
             z = tf.tanh(tanh_z)*tf.sigmoid(sig_z)
@@ -63,7 +63,7 @@ class UpsampleNet:
         return self.upsampling(input)
 
 class Wavenet:
-    def __init__(self, n_loop, layers_per_loop, k_size, res_channel, skip_channel, out_channel, conditioning=True, name='Wavenet'):
+    def __init__(self, n_loop=2, layers_per_loop=10, k_size=2, res_channel=64, skip_channel=256, out_channel=256, conditioning=True, name='Wavenet'):
         self.n_loop = n_loop
         self.layers_per_loop = layers_per_loop
         self.k_size = k_size

@@ -1,5 +1,7 @@
 reference
 data
 log
+test.py
+*.meta
 ipynb
 __pycache__
