@@ -77,8 +77,8 @@ def train(args):
     tf.summary.scalar('loss', loss)
     opt = tf.train.AdamOptimizer(0.0001).minimize(loss)
     tf.train.export_meta_graph('wavenet.meta')
-    #with tf.Session() as sess:
-    #    loss_, _ = sess.run([loss, opt])
+    with tf.Session() as sess:
+        loss_, _ = sess.run([loss, opt])
 
 if __name__ == "__main__":
     args = parseargs()
